@@ -11,7 +11,7 @@ interface SearchProgressProps {
 export const SearchProgress: React.FC<SearchProgressProps> = ({
   searchPlan = [],
   currentSearch = 0,
-  isSearching
+  isSearching,
 }) => {
   if (!isSearching || searchPlan.length === 0) return null;
 
@@ -21,7 +21,7 @@ export const SearchProgress: React.FC<SearchProgressProps> = ({
         <Search className="h-5 w-5 text-blue-600 mr-2" />
         <h3 className="text-blue-800 font-semibold">Research Progress</h3>
       </div>
-      
+
       <div className="space-y-2">
         {searchPlan.map((search, index) => (
           <div key={index} className="flex items-start space-x-3">
@@ -35,27 +35,29 @@ export const SearchProgress: React.FC<SearchProgressProps> = ({
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className={`text-sm font-medium ${
-                index <= currentSearch ? 'text-gray-900' : 'text-gray-500'
-              }`}>
+              <p
+                className={`text-sm font-medium ${
+                  index <= currentSearch ? 'text-gray-900' : 'text-gray-500'
+                }`}
+              >
                 {search.query}
               </p>
-              <p className={`text-xs ${
-                index <= currentSearch ? 'text-gray-600' : 'text-gray-400'
-              }`}>
+              <p
+                className={`text-xs ${
+                  index <= currentSearch ? 'text-gray-600' : 'text-gray-400'
+                }`}
+              >
                 {search.reason}
               </p>
             </div>
           </div>
         ))}
       </div>
-      
+
       <div className="mt-3 text-sm text-blue-700">
-        {currentSearch >= searchPlan.length ? (
-          'Generating report...'
-        ) : (
-          `Searching ${currentSearch + 1} of ${searchPlan.length}`
-        )}
+        {currentSearch >= searchPlan.length
+          ? 'Generating report...'
+          : `Searching ${currentSearch + 1} of ${searchPlan.length}`}
       </div>
     </div>
   );

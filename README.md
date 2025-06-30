@@ -16,16 +16,19 @@ A modern React frontend for the AI Research Bot that provides an intuitive inter
 ## Quick Start
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Start the development server**:
+
    ```bash
    npm run dev
    ```
 
 3. **Make sure the backend is running**:
+
    ```bash
    # In the parent directory
    npm run server
@@ -73,6 +76,7 @@ The frontend communicates with the research bot server via a proxy configuration
 ## Styling
 
 The frontend uses:
+
 - **Tailwind CSS** for utility-first styling
 - **Lucide React** for consistent iconography
 - **Custom animations** for smooth user interactions
@@ -81,6 +85,7 @@ The frontend uses:
 ## Production Deployment
 
 1. **Build the application**:
+
    ```bash
    npm run build
    ```

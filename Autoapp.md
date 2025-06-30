@@ -5,6 +5,7 @@ This document contains all the necessary frontend code to integrate the AI Resea
 ## Overview
 
 The research system provides a comprehensive AI-powered research interface that includes:
+
 - Real-time search progress tracking
 - Streaming research results
 - Interactive follow-up questions
@@ -40,10 +41,7 @@ Add these dependencies to your `package.json`:
 ```javascript
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       animation: {
@@ -63,7 +61,7 @@ export default {
     },
   },
   plugins: [],
-}
+};
 ```
 
 ### CSS Styles (`styles.css`)
@@ -77,10 +75,11 @@ export default {
   * {
     box-sizing: border-box;
   }
-  
+
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
       sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -92,55 +91,55 @@ export default {
   .prose {
     @apply text-gray-700 leading-relaxed;
   }
-  
+
   .prose h1 {
     @apply text-2xl font-bold text-gray-900 mb-4 mt-6 first:mt-0;
   }
-  
+
   .prose h2 {
     @apply text-xl font-semibold text-gray-800 mb-3 mt-6;
   }
-  
+
   .prose h3 {
     @apply text-lg font-medium text-gray-800 mb-2 mt-4;
   }
-  
+
   .prose p {
     @apply mb-4 leading-relaxed;
   }
-  
+
   .prose ul {
     @apply list-disc pl-6 mb-4 space-y-1;
   }
-  
+
   .prose ol {
     @apply list-decimal pl-6 mb-4 space-y-1;
   }
-  
+
   .prose li {
     @apply text-gray-700;
   }
-  
+
   .prose strong {
     @apply font-semibold text-gray-900;
   }
-  
+
   .prose em {
     @apply italic text-gray-800;
   }
-  
+
   .prose blockquote {
     @apply border-l-4 border-blue-200 pl-4 py-2 my-4 bg-blue-50 italic;
   }
-  
+
   .prose code {
     @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800;
   }
-  
+
   .prose pre {
     @apply bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm;
   }
-  
+
   .prose pre code {
     @apply bg-transparent p-0;
   }
@@ -199,9 +198,23 @@ const API_BASE_URL = '/api';
 export interface StreamingCallbacks {
   onStatus?: (data: { stage: string; message: string }) => void;
   onPlan?: (data: { searchPlan: any; message: string }) => void;
-  onSearch?: (data: { currentSearch: number; totalSearches: number; searchItem: any; message: string }) => void;
-  onSearchComplete?: (data: { currentSearch: number; totalSearches: number; completed: number; message: string }) => void;
-  onSearchError?: (data: { currentSearch: number; searchItem: any; error: string }) => void;
+  onSearch?: (data: {
+    currentSearch: number;
+    totalSearches: number;
+    searchItem: any;
+    message: string;
+  }) => void;
+  onSearchComplete?: (data: {
+    currentSearch: number;
+    totalSearches: number;
+    completed: number;
+    message: string;
+  }) => void;
+  onSearchError?: (data: {
+    currentSearch: number;
+    searchItem: any;
+    error: string;
+  }) => void;
   onComplete?: (data: ApiResponse) => void;
   onError?: (error: string) => void;
 }
@@ -221,7 +234,7 @@ export class ApiClient {
     }
 
     const data = await response.json();
-    
+
     if (!data.success) {
       const error = data as ApiError;
       throw new Error(error.message || 'Research failed');
@@ -230,7 +243,10 @@ export class ApiClient {
     return data as ApiResponse;
   }
 
-  static async researchStream(query: string, callbacks: StreamingCallbacks): Promise<void> {
+  static async researchStream(
+    query: string,
+    callbacks: StreamingCallbacks,
+  ): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/research/stream`, {
       method: 'POST',
       headers: {
@@ -254,25 +270,25 @@ export class ApiClient {
     try {
       while (true) {
         const { done, value } = await reader.read();
-        
+
         if (done) break;
-        
+
         buffer += decoder.decode(value, { stream: true });
-        
+
         // Process complete messages
         const lines = buffer.split('\n');
         buffer = lines.pop() || ''; // Keep incomplete line in buffer
-        
+
         for (const line of lines) {
           if (line.startsWith('event: ')) {
             const event = line.substring(7).trim();
             continue;
           }
-          
+
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.substring(6));
-              
+
               // Handle different event types
               if (data.stage) {
                 callbacks.onStatus?.(data);
@@ -280,7 +296,10 @@ export class ApiClient {
                 callbacks.onPlan?.(data);
               } else if (data.currentSearch !== undefined && data.searchItem) {
                 callbacks.onSearch?.(data);
-              } else if (data.currentSearch !== undefined && data.completed !== undefined) {
+              } else if (
+                data.currentSearch !== undefined &&
+                data.completed !== undefined
+              ) {
                 callbacks.onSearchComplete?.(data);
               } else if (data.currentSearch !== undefined && data.error) {
                 callbacks.onSearchError?.(data);
@@ -305,7 +324,7 @@ export class ApiClient {
 
   static async healthCheck(): Promise<{ status: string; service: string }> {
     const response = await fetch(`${API_BASE_URL}/health`);
-    
+
     if (!response.ok) {
       throw new Error(`Health check failed: ${response.status}`);
     }
@@ -328,9 +347,9 @@ interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
-  message = 'Loading...', 
-  size = 'md' 
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  message = 'Loading...',
+  size = 'md'
 }) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
@@ -415,7 +434,7 @@ export const SearchProgress: React.FC<SearchProgressProps> = ({
         <Search className="h-5 w-5 text-blue-600 mr-2" />
         <h3 className="text-blue-800 font-semibold">Research Progress</h3>
       </div>
-      
+
       <div className="space-y-2">
         {searchPlan.map((search, index) => (
           <div key={index} className="flex items-start space-x-3">
@@ -443,7 +462,7 @@ export const SearchProgress: React.FC<SearchProgressProps> = ({
           </div>
         ))}
       </div>
-      
+
       <div className="mt-3 text-sm text-blue-700">
         {currentSearch >= searchPlan.length ? (
           'Generating report...'
@@ -593,7 +612,7 @@ export const ResearchBot: React.FC = () => {
   const [traceId, setTraceId] = useState<string | undefined>();
   const [currentQuery, setCurrentQuery] = useState<string>('');
   const [serverStatus, setServerStatus] = useState<'unknown' | 'online' | 'offline'>('unknown');
-  
+
   // Streaming progress state
   const [currentStage, setCurrentStage] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string>('');
@@ -617,7 +636,7 @@ export const ResearchBot: React.FC = () => {
 
   const handleResearch = async () => {
     if (!query.trim()) return;
-    
+
     // Reset all state
     setLoading(true);
     setError(null);
@@ -705,18 +724,18 @@ export const ResearchBot: React.FC = () => {
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             Get comprehensive research reports on any topic using AI-powered web search and analysis
           </p>
-          
+
           {/* Server Status Indicator */}
           <div className="flex items-center justify-center mt-4">
             <div className={`flex items-center text-sm px-3 py-1 rounded-full ${
-              serverStatus === 'online' 
+              serverStatus === 'online'
                 ? 'bg-green-100 text-green-700'
                 : serverStatus === 'offline'
                 ? 'bg-red-100 text-red-700'
                 : 'bg-gray-100 text-gray-600'
             }`}>
               <div className={`w-2 h-2 rounded-full mr-2 ${
-                serverStatus === 'online' 
+                serverStatus === 'online'
                   ? 'bg-green-500'
                   : serverStatus === 'offline'
                   ? 'bg-red-500'
@@ -745,7 +764,7 @@ export const ResearchBot: React.FC = () => {
               disabled={loading || serverStatus === 'offline'}
             />
           </div>
-          
+
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="h-4 w-4 mr-1" />
@@ -781,7 +800,7 @@ export const ResearchBot: React.FC = () => {
                   <p className="text-amber-800 font-medium">Research server is offline</p>
                   <p className="text-amber-700 text-sm mt-1">
                     Make sure the research bot server is running on port 3001.
-                    <button 
+                    <button
                       onClick={checkServerStatus}
                       className="ml-2 text-amber-600 hover:text-amber-800 underline"
                     >
@@ -797,7 +816,7 @@ export const ResearchBot: React.FC = () => {
         {/* Loading State with Progress */}
         {loading && (
           <div className="max-w-4xl mx-auto mb-6">
-            <SearchProgress 
+            <SearchProgress
               searchPlan={searchPlan}
               currentSearch={currentSearchIndex}
               isSearching={loading}
@@ -890,8 +909,8 @@ Your backend server must implement these endpoints:
 Add this to your `vite.config.ts` to proxy API calls:
 
 ```typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
@@ -900,11 +919,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
-  }
-})
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+});
 ```
 
 ## Usage Instructions

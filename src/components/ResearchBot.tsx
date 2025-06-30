@@ -14,8 +14,10 @@ export const ResearchBot: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [traceId, setTraceId] = useState<string | undefined>();
   const [currentQuery, setCurrentQuery] = useState<string>('');
-  const [serverStatus, setServerStatus] = useState<'unknown' | 'online' | 'offline'>('unknown');
-  
+  const [serverStatus, setServerStatus] = useState<
+    'unknown' | 'online' | 'offline'
+  >('unknown');
+
   // Streaming progress state
   const [currentStage, setCurrentStage] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string>('');
@@ -39,7 +41,7 @@ export const ResearchBot: React.FC = () => {
 
   const handleResearch = async () => {
     if (!query.trim()) return;
-    
+
     // Reset all state
     setLoading(true);
     setError(null);
@@ -82,7 +84,7 @@ export const ResearchBot: React.FC = () => {
         setError(errorMessage);
         setServerStatus('offline');
         setLoading(false);
-      }
+      },
     };
 
     try {
@@ -122,28 +124,35 @@ export const ResearchBot: React.FC = () => {
             <div className="bg-blue-100 p-3 rounded-full mr-3">
               <Bot className="h-8 w-8 text-blue-600" />
             </div>
-            <h1 className="text-4xl font-bold text-gray-900">AI Research Bot</h1>
+            <h1 className="text-4xl font-bold text-gray-900">
+              AI Research Bot
+            </h1>
           </div>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Get comprehensive research reports on any topic using AI-powered web search and analysis
+            Get comprehensive research reports on any topic using AI-powered web
+            search and analysis
           </p>
-          
+
           {/* Server Status Indicator */}
           <div className="flex items-center justify-center mt-4">
-            <div className={`flex items-center text-sm px-3 py-1 rounded-full ${
-              serverStatus === 'online' 
-                ? 'bg-green-100 text-green-700'
-                : serverStatus === 'offline'
-                ? 'bg-red-100 text-red-700'
-                : 'bg-gray-100 text-gray-600'
-            }`}>
-              <div className={`w-2 h-2 rounded-full mr-2 ${
-                serverStatus === 'online' 
-                  ? 'bg-green-500'
+            <div
+              className={`flex items-center text-sm px-3 py-1 rounded-full ${
+                serverStatus === 'online'
+                  ? 'bg-green-100 text-green-700'
                   : serverStatus === 'offline'
-                  ? 'bg-red-500'
-                  : 'bg-gray-400'
-              }`} />
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full mr-2 ${
+                  serverStatus === 'online'
+                    ? 'bg-green-500'
+                    : serverStatus === 'offline'
+                      ? 'bg-red-500'
+                      : 'bg-gray-400'
+                }`}
+              />
               {serverStatus === 'online' && 'Server Online'}
               {serverStatus === 'offline' && 'Server Offline'}
               {serverStatus === 'unknown' && 'Checking Status...'}
@@ -167,7 +176,7 @@ export const ResearchBot: React.FC = () => {
               disabled={loading || serverStatus === 'offline'}
             />
           </div>
-          
+
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center text-sm text-gray-500">
               <Clock className="h-4 w-4 mr-1" />
@@ -200,10 +209,12 @@ export const ResearchBot: React.FC = () => {
               <div className="flex items-center">
                 <AlertCircle className="h-5 w-5 text-amber-600 mr-2" />
                 <div>
-                  <p className="text-amber-800 font-medium">Research server is offline</p>
+                  <p className="text-amber-800 font-medium">
+                    Research server is offline
+                  </p>
                   <p className="text-amber-700 text-sm mt-1">
                     Make sure the research bot server is running on port 3001.
-                    <button 
+                    <button
                       onClick={checkServerStatus}
                       className="ml-2 text-amber-600 hover:text-amber-800 underline"
                     >
@@ -219,7 +230,7 @@ export const ResearchBot: React.FC = () => {
         {/* Loading State with Progress */}
         {loading && (
           <div className="max-w-4xl mx-auto mb-6">
-            <SearchProgress 
+            <SearchProgress
               searchPlan={searchPlan}
               currentSearch={currentSearchIndex}
               isSearching={loading}
@@ -228,7 +239,9 @@ export const ResearchBot: React.FC = () => {
               <div className="mt-4 text-center">
                 <p className="text-sm text-gray-600">{statusMessage}</p>
                 {currentStage && (
-                  <p className="text-xs text-gray-500 capitalize">Stage: {currentStage}</p>
+                  <p className="text-xs text-gray-500 capitalize">
+                    Stage: {currentStage}
+                  </p>
                 )}
               </div>
             )}
@@ -267,12 +280,12 @@ export const ResearchBot: React.FC = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
-                "Latest developments in artificial intelligence",
-                "Impact of remote work on productivity",
-                "Renewable energy trends in 2024",
-                "Cryptocurrency market analysis",
-                "Space exploration recent achievements",
-                "Climate change mitigation technologies"
+                'Latest developments in artificial intelligence',
+                'Impact of remote work on productivity',
+                'Renewable energy trends in 2024',
+                'Cryptocurrency market analysis',
+                'Space exploration recent achievements',
+                'Climate change mitigation technologies',
               ].map((sampleQuery, index) => (
                 <button
                   key={index}

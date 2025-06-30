@@ -12,7 +12,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   title = 'Error',
   message,
   onRetry,
-  showRetry = true
+  showRetry = true,
 }) => {
   return (
     <div className="bg-red-50 border border-red-200 rounded-lg p-6 animate-fade-in">
